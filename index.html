@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stresskelima - Pengurusan Skrip & Cerita</title>
-
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#020617" />
+  <link rel="icon" href="data:,">
 
   <style>
     :root {
@@ -20,22 +20,14 @@
       --danger: #f97373;
       --input-bg: #020617;
     }
-
     body {
       margin: 0;
       font-family: system-ui, sans-serif;
       background-color: var(--bg-main);
       color: var(--text-main);
     }
-
     .hidden { display: none !important; }
-
-    .app-shell {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
+    .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
     header {
       padding: 1rem;
       border-bottom: 1px solid var(--border-subtle);
@@ -43,7 +35,6 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .pill-button {
       padding: 0.4rem 0.8rem;
       border-radius: 999px;
@@ -52,20 +43,17 @@
       color: var(--text-main);
       cursor: pointer;
     }
-
     .pill-button.primary {
       background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
       border: none;
       color: white;
     }
-
     main {
       padding: 1rem;
       max-width: 900px;
       margin: auto;
       width: 100%;
     }
-
     .card {
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--border-subtle);
@@ -73,7 +61,6 @@
       border-radius: 0.8rem;
       margin-bottom: 1rem;
     }
-
     .list {
       display: flex;
       flex-direction: column;
@@ -81,7 +68,6 @@
       max-height: 60vh;
       overflow-y: auto;
     }
-
     .list-item {
       padding: 0.6rem;
       border-radius: 0.6rem;
@@ -90,7 +76,6 @@
       justify-content: space-between;
       cursor: pointer;
     }
-
     .textarea {
       width: 100%;
       min-height: 80px;
@@ -100,7 +85,6 @@
       padding: 0.5rem;
       color: var(--text-main);
     }
-
     .watak-card {
       border: 1px solid var(--border-subtle);
       padding: 0.7rem;
@@ -109,33 +93,25 @@
     }
   </style>
 </head>
-
 <body>
   <div class="app-shell">
-
     <header>
       <div>
         <div style="font-size:0.8rem;color:#9ca3af;">Stresskelima</div>
         <div style="font-size:1.1rem;">Pengurusan Skrip & Cerita</div>
       </div>
-
       <div style="display:flex;gap:0.5rem;">
         <button id="logSejarahButton" class="pill-button hidden">Log sejarah</button>
         <button id="loginButton" class="pill-button primary">Login Google</button>
         <button id="logoutButton" class="pill-button hidden">Logout</button>
       </div>
     </header>
-
     <main>
-
-      <!-- LOGIN -->
       <section id="view-login" class="card">
         <h2>Log masuk akaun Google</h2>
         <p>Simpan skrip & cerita anda dengan selamat.</p>
         <button id="loginButtonMain" class="pill-button primary">Login dengan Google</button>
       </section>
-
-      <!-- CERITA -->
       <section id="view-cerita" class="card hidden">
         <h2>Cerita</h2>
         <button id="addCeritaButton" class="pill-button primary">+ Tambah Cerita</button>
@@ -143,8 +119,6 @@
         <div id="ceritaList" class="list"></div>
         <div id="ceritaEmptyState">Belum ada cerita.</div>
       </section>
-
-      <!-- SEASON -->
       <section id="view-season" class="card hidden">
         <h2>Season</h2>
         <div id="seasonSubtitle"></div>
@@ -154,8 +128,6 @@
         <div id="seasonList" class="list"></div>
         <div id="seasonEmptyState">Belum ada season.</div>
       </section>
-
-      <!-- EPISOD -->
       <section id="view-episod" class="card hidden">
         <h2>Episod</h2>
         <div id="episodSubtitle"></div>
@@ -165,8 +137,6 @@
         <div id="episodList" class="list"></div>
         <div id="episodEmptyState">Belum ada episod.</div>
       </section>
-
-      <!-- BABAK -->
       <section id="view-babak" class="card hidden">
         <h2>Babak</h2>
         <div id="babakSubtitle"></div>
@@ -176,8 +146,6 @@
         <div id="babakList" class="list"></div>
         <div id="babakEmptyState">Belum ada babak.</div>
       </section>
-
-      <!-- ACTION & DIALOG -->
       <section id="view-action-dialog" class="card hidden">
         <h2>Action & Dialog</h2>
         <div id="actionDialogSubtitle"></div>
@@ -187,23 +155,17 @@
         <div id="watakList"></div>
         <div id="watakEmptyState">Belum ada watak.</div>
       </section>
-
-      <!-- LOG -->
       <section id="view-log" class="card hidden">
         <h2>Log Sejarah Babak</h2>
         <button id="closeLogButton" class="pill-button">Tutup</button>
         <div id="logList" class="list"></div>
         <div id="logEmptyState">Belum ada log.</div>
       </section>
-
     </main>
   </div>
 
-<script type="module">
+  <script type="module">
 
-/* -----------------------------
-   ✅ FIREBASE IMPORT & SETUP
-------------------------------*/
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
@@ -238,9 +200,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-/* -----------------------------
-   ✅ DOM ELEMENTS
-------------------------------*/
 const viewLogin = document.getElementById("view-login");
 const viewCerita = document.getElementById("view-cerita");
 const viewSeason = document.getElementById("view-season");
@@ -291,52 +250,20 @@ const closeLogButton = document.getElementById("closeLogButton");
 const logList = document.getElementById("logList");
 const logEmptyState = document.getElementById("logEmptyState");
 
-/* -----------------------------
-   ✅ GLOBAL STATE
-------------------------------*/
 let currentUser = null;
 let currentCerita = null;
 let currentSeason = null;
 let currentEpisod = null;
 let currentBabak = null;
 
-/* -----------------------------
-   ✅ VIEW SWITCHER
-------------------------------*/
 function showView(v) {
   [
     viewLogin, viewCerita, viewSeason, viewEpisod,
     viewBabak, viewActionDialog, viewLog
   ].forEach(x => x.classList.add("hidden"));
-
   v.classList.remove("hidden");
 }
 
-/* -----------------------------
-   ✅ FIRESTORE PATH HELPERS
-------------------------------*/
-function pathCerita() {
-  return collection(db, "users", currentUser.uid, "cerita");
-}
-function pathSeason() {
-  return collection(db, "users", currentUser.uid, "cerita", currentCerita.id, "seasons");
-}
-function pathEpisod() {
-  return collection(db, "users", currentUser.uid, "cerita", currentCerita.id, "seasons", currentSeason.id, "episod");
-}
-function pathBabak() {
-  return collection(db, "users", currentUser.uid, "cerita", currentCerita.id, "seasons", currentSeason.id, "episod", currentEpisod.id, "babak");
-}
-function pathWatak() {
-  return collection(db, "users", currentUser.uid, "cerita", currentCerita.id, "seasons", currentSeason.id, "episod", currentEpisod.id, "babak", currentBabak.id, "watak");
-}
-function pathLogs() {
-  return collection(db, "users", currentUser.uid, "logs");
-}
-
-/* -----------------------------
-   ✅ DATE FORMAT (Malaysia)
-------------------------------*/
 function formatMsDate(date) {
   const days = ["Ahad","Isnin","Selasa","Rabu","Khamis","Jumaat","Sabtu"];
   const months = ["Jan","Feb","Mac","Apr","Mei","Jun","Jul","Ogos","Sep","Okt","Nov","Dis"];
@@ -348,13 +275,32 @@ function formatMsDate(date) {
   return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}, ${h}:${m} ${suffix}`;
 }
 
-/* -----------------------------
-   ✅ AUTH HANDLING
-------------------------------*/
+function pathCerita() {
+  return collection(db, "users", currentUser.uid, "cerita");
+}
+function pathSeason() {
+  if (!currentCerita) return null;
+  return collection(db, "users", currentUser.uid, "cerita", currentCerita.id, "seasons");
+}
+function pathEpisod() {
+  if (!currentCerita || !currentSeason) return null;
+  return collection(db, "users", currentUser.uid, "cerita", currentCerita.id, "seasons", currentSeason.id, "episod");
+}
+function pathBabak() {
+  if (!currentCerita || !currentSeason || !currentEpisod) return null;
+  return collection(db, "users", currentUser.uid, "cerita", currentCerita.id, "seasons", currentSeason.id, "episod", currentEpisod.id, "babak");
+}
+function pathWatak() {
+  if (!currentCerita || !currentSeason || !currentEpisod || !currentBabak) return null;
+  return collection(db, "users", currentUser.uid, "cerita", currentCerita.id, "seasons", currentSeason.id, "episod", currentEpisod.id, "babak", currentBabak.id, "watak");
+}
+function pathLogs() {
+  return collection(db, "users", currentUser.uid, "logs");
+}
+
 async function signIn() {
   await signInWithPopup(auth, provider);
 }
-
 async function signOutUser() {
   await signOut(auth);
 }
@@ -365,34 +311,23 @@ logoutButton.addEventListener("click", signOutUser);
 
 onAuthStateChanged(auth, user => {
   currentUser = user;
-
   if (user) {
     showView(viewCerita);
     subscribeCerita();
-
     loginButton.classList.add("hidden");
     loginButtonMain.classList.add("hidden");
     logoutButton.classList.remove("hidden");
     logSejarahButton.classList.remove("hidden");
-
   } else {
     showView(viewLogin);
-
     logoutButton.classList.add("hidden");
     logSejarahButton.classList.add("hidden");
   }
 });
 
-/* -----------------------------
-   ✅ CERITA (LIST, ADD, EDIT, DELETE)
-------------------------------*/
-
 let unsubCerita = null;
-
 function subscribeCerita() {
-  if (!currentUser) return;
   if (unsubCerita) unsubCerita();
-
   unsubCerita = onSnapshot(pathCerita(), snap => {
     const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderCerita(data);
@@ -402,50 +337,15 @@ function subscribeCerita() {
 function renderCerita(list) {
   ceritaList.innerHTML = "";
   const term = searchCeritaInput.value.toLowerCase();
-
   const filtered = list.filter(x => x.nama.toLowerCase().includes(term));
 
-  if (filtered.length === 0) ceritaEmptyState.classList.remove("hidden");
-  else ceritaEmptyState.classList.add("hidden");
+  ceritaEmptyState.classList.toggle("hidden", filtered.length > 0);
 
   filtered.forEach(c => {
     const item = document.createElement("div");
     item.className = "list-item";
-
-    const left = document.createElement("div");
-    left.textContent = c.nama;
-
-    const right = document.createElement("div");
-    right.style.display = "flex";
-    right.style.gap = "0.3rem";
-
-    const editBtn = document.createElement("button");
-    editBtn.className = "pill-button";
-    editBtn.textContent = "Edit";
-    editBtn.onclick = async (e) => {
-      e.stopPropagation();
-      const nama = prompt("Nama baru:", c.nama);
-      if (!nama) return;
-      await updateDoc(doc(pathCerita(), c.id), { nama });
-    };
-
-    const delBtn = document.createElement("button");
-    delBtn.className = "pill-button";
-    delBtn.textContent = "Buang";
-    delBtn.onclick = async (e) => {
-      e.stopPropagation();
-      if (!confirm("Buang cerita & semua anaknya?")) return;
-      await deleteCeritaTree(c.id);
-    };
-
-    right.appendChild(editBtn);
-    right.appendChild(delBtn);
-
-    item.appendChild(left);
-    item.appendChild(right);
-
+    item.textContent = c.nama;
     item.onclick = () => openSeason(c);
-
     ceritaList.appendChild(item);
   });
 }
@@ -458,48 +358,6 @@ addCeritaButton.addEventListener("click", async () => {
   await addDoc(pathCerita(), { nama, createdAt: serverTimestamp() });
 });
 
-/* -----------------------------
-   ✅ DELETE TREE (CERITA → SEASON → EPISOD → BABAK → WATAK)
-------------------------------*/
-
-async function deleteCeritaTree(ceritaId) {
-  const seasonSnap = await getDocs(collection(db, "users", currentUser.uid, "cerita", ceritaId, "seasons"));
-  for (const s of seasonSnap.docs) {
-    await deleteSeasonTree(ceritaId, s.id);
-  }
-  await deleteDoc(doc(pathCerita(), ceritaId));
-}
-
-async function deleteSeasonTree(ceritaId, seasonId) {
-  const episodSnap = await getDocs(collection(db, "users", currentUser.uid, "cerita", ceritaId, "seasons", seasonId, "episod"));
-  for (const e of episodSnap.docs) {
-    await deleteEpisodTree(ceritaId, seasonId, e.id);
-  }
-  await deleteDoc(doc(pathSeason(), seasonId));
-}
-
-async function deleteEpisodTree(ceritaId, seasonId, episodId) {
-  const babakSnap = await getDocs(collection(db, "users", currentUser.uid, "cerita", ceritaId, "seasons", seasonId, "episod", episodId, "babak"));
-  for (const b of babakSnap.docs) {
-    await deleteBabakTree(ceritaId, seasonId, episodId, b.id);
-  }
-  await deleteDoc(doc(pathEpisod(), episodId));
-}
-
-async function deleteBabakTree(ceritaId, seasonId, episodId, babakId) {
-  const watakSnap = await getDocs(collection(db, "users", currentUser.uid, "cerita", ceritaId, "seasons", seasonId, "episod", episodId, "babak", babakId, "watak"));
-  for (const w of watakSnap.docs) {
-    await deleteDoc(w.ref);
-  }
-  await deleteDoc(doc(pathBabak(), babakId));
-}
-
-/* -----------------------------
-   ✅ SEASON
-------------------------------*/
-
-let unsubSeason = null;
-
 function openSeason(c) {
   currentCerita = c;
   seasonSubtitle.textContent = c.nama;
@@ -507,9 +365,10 @@ function openSeason(c) {
   subscribeSeason();
 }
 
+let unsubSeason = null;
 function subscribeSeason() {
+  if (!pathSeason()) return;
   if (unsubSeason) unsubSeason();
-
   unsubSeason = onSnapshot(pathSeason(), snap => {
     const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderSeason(data);
@@ -519,50 +378,15 @@ function subscribeSeason() {
 function renderSeason(list) {
   seasonList.innerHTML = "";
   const term = searchSeasonInput.value.toLowerCase();
-
   const filtered = list.filter(x => x.nama.toLowerCase().includes(term));
 
-  if (filtered.length === 0) seasonEmptyState.classList.remove("hidden");
-  else seasonEmptyState.classList.add("hidden");
+  seasonEmptyState.classList.toggle("hidden", filtered.length > 0);
 
   filtered.forEach(s => {
     const item = document.createElement("div");
     item.className = "list-item";
-
-    const left = document.createElement("div");
-    left.textContent = s.nama;
-
-    const right = document.createElement("div");
-    right.style.display = "flex";
-    right.style.gap = "0.3rem";
-
-    const editBtn = document.createElement("button");
-    editBtn.className = "pill-button";
-    editBtn.textContent = "Edit";
-    editBtn.onclick = async (e) => {
-      e.stopPropagation();
-      const nama = prompt("Nama baru:", s.nama);
-      if (!nama) return;
-      await updateDoc(doc(pathSeason(), s.id), { nama });
-    };
-
-    const delBtn = document.createElement("button");
-    delBtn.className = "pill-button";
-    delBtn.textContent = "Buang";
-    delBtn.onclick = async (e) => {
-      e.stopPropagation();
-      if (!confirm("Buang season & semua anaknya?")) return;
-      await deleteSeasonTree(currentCerita.id, s.id);
-    };
-
-    right.appendChild(editBtn);
-    right.appendChild(delBtn);
-
-    item.appendChild(left);
-    item.appendChild(right);
-
+    item.textContent = s.nama;
     item.onclick = () => openEpisod(s);
-
     seasonList.appendChild(item);
   });
 }
@@ -579,12 +403,7 @@ backToCeritaButton.addEventListener("click", () => {
   showView(viewCerita);
 });
 
-/* -----------------------------
-   ✅ EPISOD
-------------------------------*/
-
 let unsubEpisod = null;
-
 function openEpisod(s) {
   currentSeason = s;
   episodSubtitle.textContent = `${s.nama} • ${currentCerita.nama}`;
@@ -593,8 +412,8 @@ function openEpisod(s) {
 }
 
 function subscribeEpisod() {
+  if (!pathEpisod()) return;
   if (unsubEpisod) unsubEpisod();
-
   unsubEpisod = onSnapshot(pathEpisod(), snap => {
     const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderEpisod(data);
@@ -604,50 +423,15 @@ function subscribeEpisod() {
 function renderEpisod(list) {
   episodList.innerHTML = "";
   const term = searchEpisodInput.value.toLowerCase();
-
   const filtered = list.filter(x => x.nama.toLowerCase().includes(term));
 
-  if (filtered.length === 0) episodEmptyState.classList.remove("hidden");
-  else episodEmptyState.classList.add("hidden");
+  episodEmptyState.classList.toggle("hidden", filtered.length > 0);
 
   filtered.forEach(e => {
     const item = document.createElement("div");
     item.className = "list-item";
-
-    const left = document.createElement("div");
-    left.textContent = e.nama;
-
-    const right = document.createElement("div");
-    right.style.display = "flex";
-    right.style.gap = "0.3rem";
-
-    const editBtn = document.createElement("button");
-    editBtn.className = "pill-button";
-    editBtn.textContent = "Edit";
-    editBtn.onclick = async (ev) => {
-      ev.stopPropagation();
-      const nama = prompt("Nama baru:", e.nama);
-      if (!nama) return;
-      await updateDoc(doc(pathEpisod(), e.id), { nama });
-    };
-
-    const delBtn = document.createElement("button");
-    delBtn.className = "pill-button";
-    delBtn.textContent = "Buang";
-    delBtn.onclick = async (ev) => {
-      ev.stopPropagation();
-      if (!confirm("Buang episod & semua anaknya?")) return;
-      await deleteEpisodTree(currentCerita.id, currentSeason.id, e.id);
-    };
-
-    right.appendChild(editBtn);
-    right.appendChild(delBtn);
-
-    item.appendChild(left);
-    item.appendChild(right);
-
+    item.textContent = e.nama;
     item.onclick = () => openBabak(e);
-
     episodList.appendChild(item);
   });
 }
@@ -664,12 +448,7 @@ backToSeasonButton.addEventListener("click", () => {
   showView(viewSeason);
 });
 
-/* -----------------------------
-   ✅ BABAK
-------------------------------*/
-
 let unsubBabak = null;
-
 function openBabak(e) {
   currentEpisod = e;
   babakSubtitle.textContent = `${e.nama} • ${currentSeason.nama} • ${currentCerita.nama}`;
@@ -678,8 +457,8 @@ function openBabak(e) {
 }
 
 function subscribeBabak() {
+  if (!pathBabak()) return;
   if (unsubBabak) unsubBabak();
-
   unsubBabak = onSnapshot(pathBabak(), snap => {
     const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderBabak(data);
@@ -689,50 +468,15 @@ function subscribeBabak() {
 function renderBabak(list) {
   babakList.innerHTML = "";
   const term = searchBabakInput.value.toLowerCase();
-
   const filtered = list.filter(x => x.nama.toLowerCase().includes(term));
 
-  if (filtered.length === 0) babakEmptyState.classList.remove("hidden");
-  else babakEmptyState.classList.add("hidden");
+  babakEmptyState.classList.toggle("hidden", filtered.length > 0);
 
   filtered.forEach(b => {
     const item = document.createElement("div");
     item.className = "list-item";
-
-    const left = document.createElement("div");
-    left.textContent = b.nama;
-
-    const right = document.createElement("div");
-    right.style.display = "flex";
-    right.style.gap = "0.3rem";
-
-    const editBtn = document.createElement("button");
-    editBtn.className = "pill-button";
-    editBtn.textContent = "Edit";
-    editBtn.onclick = async (ev) => {
-      ev.stopPropagation();
-      const nama = prompt("Nama baru:", b.nama);
-      if (!nama) return;
-      await updateDoc(doc(pathBabak(), b.id), { nama });
-    };
-
-    const delBtn = document.createElement("button");
-    delBtn.className = "pill-button";
-    delBtn.textContent = "Buang";
-    delBtn.onclick = async (ev) => {
-      ev.stopPropagation();
-      if (!confirm("Buang babak & semua watak?")) return;
-      await deleteBabakTree(currentCerita.id, currentSeason.id, currentEpisod.id, b.id);
-    };
-
-    right.appendChild(editBtn);
-    right.appendChild(delBtn);
-
-    item.appendChild(left);
-    item.appendChild(right);
-
+    item.textContent = b.nama;
     item.onclick = () => openActionDialog(b);
-
     babakList.appendChild(item);
   });
 }
@@ -765,6 +509,7 @@ function openActionDialog(b) {
 }
 
 function subscribeWatak() {
+  if (!pathWatak()) return;
   if (unsubWatak) unsubWatak();
 
   unsubWatak = onSnapshot(pathWatak(), snap => {
@@ -776,18 +521,14 @@ function subscribeWatak() {
 function renderWatak(list) {
   watakList.innerHTML = "";
 
-  if (list.length === 0) {
-    watakEmptyState.classList.remove("hidden");
-  } else {
-    watakEmptyState.classList.add("hidden");
-  }
+  watakEmptyState.classList.toggle("hidden", list.length > 0);
 
   list.forEach(w => {
     const card = document.createElement("div");
     card.className = "watak-card";
 
     /* -----------------------------
-       ✅ Header (Nama Watak + Simpan + Buang)
+       ✅ Header Watak
     ------------------------------*/
     const header = document.createElement("div");
     header.style.display = "flex";
@@ -884,7 +625,8 @@ saveToLogButton.addEventListener("click", async () => {
   }
 
   const now = new Date();
-  const formatted = `${currentCerita.nama} • ${currentSeason.nama} • ${currentEpisod.nama} • ${currentBabak.nama} • ${formatMsDate(now)}`;
+  const formatted =
+    `${currentCerita.nama} • ${currentSeason.nama} • ${currentEpisod.nama} • ${currentBabak.nama} • ${formatMsDate(now)}`;
 
   await addDoc(pathLogs(), {
     ceritaName: currentCerita.nama,
@@ -899,7 +641,7 @@ saveToLogButton.addEventListener("click", async () => {
 });
 
 /* -----------------------------
-   ✅ LOG VIEW
+   ✅ PAPAR LOG
 ------------------------------*/
 
 let unsubLogs = null;
@@ -923,20 +665,12 @@ function subscribeLogs() {
 function renderLogs(list) {
   logList.innerHTML = "";
 
-  if (list.length === 0) {
-    logEmptyState.classList.remove("hidden");
-  } else {
-    logEmptyState.classList.add("hidden");
-  }
+  logEmptyState.classList.toggle("hidden", list.length > 0);
 
   list.forEach(l => {
     const item = document.createElement("div");
     item.className = "list-item";
-
-    const left = document.createElement("div");
-    left.textContent = l.formatted;
-
-    item.appendChild(left);
+    item.textContent = l.formatted;
     logList.appendChild(item);
   });
 }
