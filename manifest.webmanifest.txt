@@ -1,0 +1,21 @@
+{
+  "name": "Stresskelima - Pengurusan Skrip & Cerita",
+  "short_name": "Stresskelima",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "description": "Pengurusan skrip & cerita dengan hierarki cerita • season • episod • babak • watak.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

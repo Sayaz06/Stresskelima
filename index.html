@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stresskelima - Pengurusan Skrip & Cerita</title>
+
+  <!-- PWA basics -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#020617" />
+
+  <style>
+    :root {
+      --bg-main: #020617;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2937;
+      --border-strong: #4b5563;
+      --accent-start: #6366f1;
+      --accent-end: #8b5cf6;
+      --danger: #f97373;
+      --card-bg: #020617;
+      --card-bg-soft: #020617;
+      --input-bg: #020617;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at top, #111827 0, #020617 40%);
+    }
+
+    header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    header .title {
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    header .title-main {
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    header .title-sub {
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    header .actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0.75rem 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 0.9rem;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 0.9rem;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(18px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 0;
+      background-color: var(--input-bg);
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      padding: 0.45rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .search-input input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      width: 100%;
+    }
+
+    .search-input span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .pill-button {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      padding: 0.35rem 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s;
+    }
+
+    .pill-button.primary {
+      border: none;
+      background-image: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+      color: white;
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5);
+    }
+
+    .pill-button.ghost {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: var(--border-strong);
+      color: var(--text-muted);
+    }
+
+    .pill-button.danger {
+      border-color: rgba(248, 113, 113, 0.5);
+      color: #fecaca;
+      background: rgba(127, 29, 29, 0.3);
+    }
+
+    .pill-button.small {
+      font-size: 0.72rem;
+      padding: 0.25rem 0.6rem;
+    }
+
+    .pill-button:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      max-height: 55vh;
+      overflow-y: auto;
+      padding-right: 0.1rem;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.5rem 0.65rem;
+      border-radius: 0.65rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+    }
+
+    .list-item:hover {
+      background: rgba(30, 64, 175, 0.25);
+      border-color: rgba(129, 140, 248, 0.9);
+    }
+
+    .list-item-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 0;
+    }
+
+    .list-item-title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .list-item-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .list-item-actions {
+      display: flex;
+      gap: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .chip {
+      font-size: 0.7rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .muted {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .section-spacer {
+      height: 0.4rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .textarea {
+      width: 100%;
+      min-height: 80px;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-subtle);
+      background: var(--input-bg);
+      color: var(--text-main);
+      padding: 0.5rem 0.6rem;
+      font-size: 0.85rem;
+      resize: vertical;
+    }
+
+    .textarea:focus {
+      outline: none;
+      border-color: var(--accent-start);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+    }
+
+    .field-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .watak-card {
+      border-radius: 0.8rem;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.6rem 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .watak-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .watak-name-input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--input-bg);
+      color: var(--text-main);
+      padding: 0.25rem 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .watak-name-input:focus {
+      outline: none;
+      border-color: var(--accent-start);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+    }
+
+    .watak-body {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    @media (min-width: 720px) {
+      .watak-body {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .pill-button-inline-group {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.9);
+      color: var(--text-muted);
+    }
+
+    .small-text {
+      font-size: 0.75rem;
+    }
+
+    .centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0.4rem;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .dimmed {
+      opacity: 0.7;
+    }
+
+    .tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="title">
+        <div class="title-main">Stresskelima</div>
+        <div class="title-sub">Pengurusan Skrip &amp; Cerita</div>
+      </div>
+      <div class="actions">
+        <button id="logSejarahButton" class="pill-button ghost hidden">
+          Log sejarah
+        </button>
+        <button id="loginButton" class="pill-button primary">
+          Login Google
+        </button>
+        <button id="logoutButton" class="pill-button ghost hidden">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Login View -->
+      <section id="view-login" class="card">
+        <div class="centered">
+          <div class="badge">Langkah 1</div>
+          <h1 style="font-size: 1.15rem; margin: 0;">Log masuk akaun Google</h1>
+          <p class="tagline">
+            Simpan struktur skrip dan cerita anda dengan selamat menggunakan Firebase &amp; Firestore.
+          </p>
+          <button id="loginButtonMain" class="pill-button primary">
+            Login dengan Google
+          </button>
+          <p class="small-text dimmed">
+            Selepas login, anda akan dibawa ke halaman <strong>Tambah Cerita</strong>.
+          </p>
+        </div>
+      </section>
+
+      <!-- Cerita View -->
+      <section id="view-cerita" class="card hidden">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Cerita</div>
+            <div class="card-subtitle">Urus senarai cerita utama anda</div>
+          </div>
+          <div class="pill-button-inline-group">
+            <button id="addCeritaButton" class="pill-button primary small">
+              + Tambah Cerita
+            </button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-input">
+            <span>🔍</span>
+            <input
+              id="searchCeritaInput"
+              type="text"
+              placeholder="Cari tajuk cerita..."
+            />
+          </div>
+        </div>
+
+        <div id="ceritaList" class="list"></div>
+
+        <div id="ceritaEmptyState" class="muted">
+          Belum ada cerita. Tekan <strong>Tambah Cerita</strong> untuk mula.
+        </div>
+      </section>
+
+      <!-- Season View -->
+      <section id="view-season" class="card hidden">
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              Season
+            </div>
+            <div class="card-subtitle" id="seasonSubtitle"></div>
+          </div>
+          <div class="pill-button-inline-group">
+            <button id="backToCeritaButton" class="pill-button ghost small">
+              ← Cerita
+            </button>
+            <button id="addSeasonButton" class="pill-button primary small">
+              + Tambah Season
+            </button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-input">
+            <span>🔍</span>
+            <input
+              id="searchSeasonInput"
+              type="text"
+              placeholder="Cari season..."
+            />
+          </div>
+        </div>
+
+        <div id="seasonList" class="list"></div>
+        <div id="seasonEmptyState" class="muted">
+          Belum ada season untuk cerita ini.
+        </div>
+      </section>
+
+      <!-- Episod View -->
+      <section id="view-episod" class="card hidden">
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              Episod
+            </div>
+            <div class="card-subtitle" id="episodSubtitle"></div>
+          </div>
+          <div class="pill-button-inline-group">
+            <button id="backToSeasonButton" class="pill-button ghost small">
+              ← Season
+            </button>
+            <button id="addEpisodButton" class="pill-button primary small">
+              + Tambah Episod
+            </button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-input">
+            <span>🔍</span>
+            <input
+              id="searchEpisodInput"
+              type="text"
+              placeholder="Cari episod..."
+            />
+          </div>
+        </div>
+
+        <div id="episodList" class="list"></div>
+        <div id="episodEmptyState" class="muted">
+          Belum ada episod untuk season ini.
+        </div>
+      </section>
+
+      <!-- Babak View -->
+      <section id="view-babak" class="card hidden">
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              Babak
+            </div>
+            <div class="card-subtitle" id="babakSubtitle"></div>
+          </div>
+          <div class="pill-button-inline-group">
+            <button id="backToEpisodButton" class="pill-button ghost small">
+              ← Episod
+            </button>
+            <button id="addBabakButton" class="pill-button primary small">
+              + Tambah Babak
+            </button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-input">
+            <span>🔍</span>
+            <input
+              id="searchBabakInput"
+              type="text"
+              placeholder="Cari babak..."
+            />
+          </div>
+        </div>
+
+        <div id="babakList" class="list"></div>
+        <div id="babakEmptyState" class="muted">
+          Belum ada babak untuk episod ini.
+        </div>
+      </section>
+
+      <!-- Action & Dialog View -->
+      <section id="view-action-dialog" class="card hidden">
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              Action & Dialog
+            </div>
+            <div class="card-subtitle" id="actionDialogSubtitle"></div>
+          </div>
+          <div class="pill-button-inline-group">
+            <button id="backToBabakButton" class="pill-button ghost small">
+              ← Babak
+            </button>
+            <button id="saveToLogButton" class="pill-button ghost small">
+              Simpan ke Log
+            </button>
+            <button id="addWatakButton" class="pill-button primary small">
+              + Tambah Watak
+            </button>
+          </div>
+        </div>
+
+        <div id="watakList" class="list"></div>
+        <div id="watakEmptyState" class="muted">
+          Belum ada watak untuk babak ini. Tambah watak untuk menulis action &amp; dialog.
+        </div>
+      </section>
+
+      <!-- Log View -->
+      <section id="view-log" class="card hidden">
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              Log Sejarah Babak
+            </div>
+            <div class="card-subtitle">
+              Rekod babak yang disimpan ke log
+            </div>
+          </div>
+          <div class="pill-button-inline-group">
+            <button id="closeLogButton" class="pill-button ghost small">
+              Tutup
+            </button>
+          </div>
+        </div>
+
+        <div id="logList" class="list"></div>
+        <div id="logEmptyState" class="muted">
+          Belum ada log lagi. Pergi ke <strong>Action &amp; Dialog</strong>, kemudian tekan <strong>Simpan ke Log</strong>.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // TODO: Gantikan config ini dengan config Firebase projek Ad
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      getDocs,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "PASTE_API_KEY_HERE",
+      authDomain: "PASTE_AUTH_DOMAIN_HERE",
+      projectId: "PASTE_PROJECT_ID_HERE",
+      storageBucket: "PASTE_BUCKET_HERE",
+      messagingSenderId: "PASTE_SENDER_ID_HERE",
+      appId: "PASTE_APP_ID_HERE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    // DOM refs
+    const viewLogin = document.getElementById("view-login");
+    const viewCerita = document.getElementById("view-cerita");
+    const viewSeason = document.getElementById("view-season");
+    const viewEpisod = document.getElementById("view-episod");
+    const viewBabak = document.getElementById("view-babak");
+    const viewActionDialog = document.getElementById("view-action-dialog");
+    const viewLog = document.getElementById("view-log");
+
+    const loginButton = document.getElementById("loginButton");
+    const loginButtonMain = document.getElementById("loginButtonMain");
+    const logoutButton = document.getElementById("logoutButton");
+    const logSejarahButton = document.getElementById("logSejarahButton");
+
+    const addCeritaButton = document.getElementById("addCeritaButton");
+    const searchCeritaInput = document.getElementById("searchCeritaInput");
+    const ceritaList = document.getElementById("ceritaList");
+    const ceritaEmptyState = document.getElementById("ceritaEmptyState");
+
+    const backToCeritaButton = document.getElementById("backToCeritaButton");
+    const seasonSubtitle = document.getElementById("seasonSubtitle");
+    const addSeasonButton = document.getElementById("addSeasonButton");
+    const searchSeasonInput = document.getElementById("searchSeasonInput");
+    const seasonList = document.getElementById("seasonList");
+    const seasonEmptyState = document.getElementById("seasonEmptyState");
+
+    const backToSeasonButton = document.getElementById("backToSeasonButton");
+    const episodSubtitle = document.getElementById("episodSubtitle");
+    const addEpisodButton = document.getElementById("addEpisodButton");
+    const searchEpisodInput = document.getElementById("searchEpisodInput");
+    const episodList = document.getElementById("episodList");
+    const episodEmptyState = document.getElementById("episodEmptyState");
+
+    const backToEpisodButton = document.getElementById("backToEpisodButton");
+    const babakSubtitle = document.getElementById("babakSubtitle");
+    const addBabakButton = document.getElementById("addBabakButton");
+    const searchBabakInput = document.getElementById("searchBabakInput");
+    const babakList = document.getElementById("babakList");
+    const babakEmptyState = document.getElementById("babakEmptyState");
+
+    const backToBabakButton = document.getElementById("backToBabakButton");
+    const actionDialogSubtitle = document.getElementById("actionDialogSubtitle");
+    const saveToLogButton = document.getElementById("saveToLogButton");
+    const addWatakButton = document.getElementById("addWatakButton");
+    const watakList = document.getElementById("watakList");
+    const watakEmptyState = document.getElementById("watakEmptyState";
+
+    const closeLogButton = document.getElementById("closeLogButton");
+    const logList = document.getElementById("logList");
+    const logEmptyState = document.getElementById("logEmptyState");
+
+    // App state
+    let currentUser = null;
+
+    let currentCerita = null; // { id, nama }
+    let currentSeason = null; // { id, nama }
+    let currentEpisod = null; // { id, nama }
+    let currentBabak = null;  // { id, nama }
+
+    // Helpers
+    function showView(view) {
+      [
+        viewLogin,
+        viewCerita,
+        viewSeason,
+        viewEpisod,
+        viewBabak,
+        viewActionDialog,
+        viewLog
+      ].forEach(v => v.classList.add("hidden"));
+
+      view.classList.remove("hidden");
+    }
+
+    function updateAuthUI() {
+      if (currentUser) {
+        loginButton.classList.add("hidden");
+        loginButtonMain.classList.add("hidden");
+        logoutButton.classList.remove("hidden");
+        logSejarahButton.classList.remove("hidden");
+      } else {
+        logoutButton.classList.add("hidden");
+        logSejarahButton.classList.add("hidden");
+        loginButton.classList.remove("hidden");
+        loginButtonMain.classList.remove("hidden");
+      }
+    }
+
+    function ensureUser() {
+      if (!currentUser) {
+        alert("Sila login dahulu.");
+        return false;
+      }
+      return true;
+    }
+
+    function pathCeritaCollection() {
+      return collection(db, "users", currentUser.uid, "cerita");
+    }
+
+    function pathSeasonCollection() {
+      return collection(db,
+        "users", currentUser.uid,
+        "cerita", currentCerita.id,
+        "seasons"
+      );
+    }
+
+    function pathEpisodCollection() {
+      return collection(db,
+        "users", currentUser.uid,
+        "cerita", currentCerita.id,
+        "seasons", currentSeason.id,
+        "episod"
+      );
+    }
+
+    function pathBabakCollection() {
+      return collection(db,
+        "users", currentUser.uid,
+        "cerita", currentCerita.id,
+        "seasons", currentSeason.id,
+        "episod", currentEpisod.id,
+        "babak"
+      );
+    }
+
+    function pathWatakCollection() {
+      return collection(db,
+        "users", currentUser.uid,
+        "cerita", currentCerita.id,
+        "seasons", currentSeason.id,
+        "episod", currentEpisod.id,
+        "babak", currentBabak.id,
+        "watak"
+      );
+    }
+
+    function pathLogsCollection() {
+      return collection(db, "users", currentUser.uid, "logs");
+    }
+
+    function formatMsDate(date) {
+      // Format gaya Malaysia: Sabtu, 29 Nov 2025, 9:07 pagi
+      const days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+      const monthsShort = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogos", "Sep", "Okt", "Nov", "Dis"];
+      const dayName = days[date.getDay()];
+      const day = date.getDate();
+      const month = monthsShort[date.getMonth()];
+      const year = date.getFullYear();
+      let hours = date.getHours();
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      const isPm = hours >= 12;
+      const suffix = isPm ? "petang" : "pagi";
+      if (hours === 0) hours = 12;
+      else if (hours > 12) hours -= 12;
+      return `${dayName}, ${day} ${month} ${year}, ${hours}:${minutes} ${suffix}`;
+    }
+
+    // Auth
+    async function signIn() {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        console.error(err);
+        alert("Login gagal. Sila cuba lagi.");
+      }
+    }
+
+    async function signOutUser() {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error(err);
+        alert("Gagal logout.");
+      }
+    }
+
+    loginButton.addEventListener("click", signIn);
+    loginButtonMain.addEventListener("click", signIn);
+    logoutButton.addEventListener("click", signOutUser);
+
+    onAuthStateChanged(auth, user => {
+      currentUser = user;
+      updateAuthUI();
+
+      if (user) {
+        // Terus ke cerita view
+        subscribeCerita();
+        showView(viewCerita);
+      } else {
+        currentCerita = null;
+        currentSeason = null;
+        currentEpisod = null;
+        currentBabak = null;
+        showView(viewLogin);
+      }
+    });
+
+    // CERITA
+    let unsubscribeCerita = null;
+    let semuaCerita = [];
+
+    function subscribeCerita() {
+      if (!ensureUser()) return;
+      if (unsubscribeCerita) {
+        unsubscribeCerita();
+      }
+      unsubscribeCerita = onSnapshot(pathCeritaCollection(), snapshot => {
+        semuaCerita = snapshot.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data()
+        })).sort((a, b) => (a.nama || "").localeCompare(b.nama || ""));
+        renderCeritaList();
+      });
+    }
+
+    function renderCeritaList() {
+      const searchTerm = (searchCeritaInput.value || "").toLowerCase().trim();
+      ceritaList.innerHTML = "";
+      const filtered = semuaCerita.filter(c =>
+        !searchTerm || (c.nama || "").toLowerCase().includes(searchTerm)
+      );
+
+      if (filtered.length === 0) {
+        ceritaEmptyState.classList.remove("hidden");
+      } else {
+        ceritaEmptyState.classList.add("hidden");
+      }
+
+      filtered.forEach(cerita => {
+        const item = document.createElement("div");
+        item.className = "list-item";
+        item.addEventListener("click", (e) => {
+          // Jangan trigger bila klik button edit/delete
+          if (e.target.closest("button")) return;
+          openSeasonView(cerita);
+        });
+
+        const main = document.createElement("div");
+        main.className = "list-item-main";
+
+        const title = document.createElement("div");
+        title.className = "list-item-title";
+        title.textContent = cerita.nama || "(Tanpa nama)";
+
+        const sub = document.createElement("div");
+        sub.className = "list-item-sub";
+        sub.textContent = "Cerita";
+
+        main.appendChild(title);
+        main.appendChild(sub);
+
+        const actions = document.createElement("div");
+        actions.className = "list-item-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "pill-button small ghost";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const newName = prompt("Nama cerita baru:", cerita.nama || "");
+          if (!newName) return;
+          await updateDoc(doc(pathCeritaCollection(), cerita.id), {
+            nama: newName.trim()
+          });
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "pill-button small danger";
+        delBtn.textContent = "Buang";
+        delBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const confirmDelete = confirm(
+            "Buang cerita ini dan semua season/episod/babak/watak di bawahnya?"
+          );
+          if (!confirmDelete) return;
+          await deleteCeritaTree(cerita.id);
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        item.appendChild(main);
+        item.appendChild(actions);
+
+        ceritaList.appendChild(item);
+      });
+    }
+
+    searchCeritaInput.addEventListener("input", renderCeritaList);
+
+    addCeritaButton.addEventListener("click", async () => {
+      if (!ensureUser()) return;
+      const nama = prompt("Nama cerita:");
+      if (!nama || !nama.trim()) return;
+      await addDoc(pathCeritaCollection(), {
+        nama: nama.trim(),
+        createdAt: serverTimestamp()
+      });
+    });
+
+    // Delete tree helpers
+    async function deleteCeritaTree(ceritaId) {
+      const ceritaRef = doc(pathCeritaCollection(), ceritaId);
+      const seasonCol = collection(ceritaRef, "seasons");
+      const seasons = await getDocs(seasonCol);
+      for (const s of seasons.docs) {
+        await deleteSeasonTree(ceritaId, s.id);
+      }
+      await deleteDoc(ceritaRef);
+    }
+
+    async function deleteSeasonTree(ceritaId, seasonId) {
+      const seasonRef = doc(
+        collection(pathCeritaCollection(), ceritaId, "seasons"),
+        seasonId
+      );
+      const episodCol = collection(seasonRef, "episod");
+      const episods = await getDocs(episodCol);
+      for (const e of episods.docs) {
+        await deleteEpisodTree(ceritaId, seasonId, e.id);
+      }
+      await deleteDoc(seasonRef);
+    }
+
+    async function deleteEpisodTree(ceritaId, seasonId, episodId) {
+      const episodRef = doc(
+        collection(
+          pathCeritaCollection(),
+          ceritaId,
+          "seasons",
+          seasonId,
+          "episod"
+        ),
+        episodId
+      );
+      const babakCol = collection(episodRef, "babak");
+      const babaks = await getDocs(babakCol);
+      for (const b of babaks.docs) {
+        await deleteBabakTree(ceritaId, seasonId, episodId, b.id);
+      }
+      await deleteDoc(episodRef);
+    }
+
+    async function deleteBabakTree(ceritaId, seasonId, episodId, babakId) {
+      const babakRef = doc(
+        collection(
+          pathCeritaCollection(),
+          ceritaId,
+          "seasons",
+          seasonId,
+          "episod",
+          episodId,
+          "babak"
+        ),
+        babakId
+      );
+      const watakCol = collection(babakRef, "watak");
+      const wataks = await getDocs(watakCol);
+      for (const w of wataks.docs) {
+        await deleteDoc(w.ref);
+      }
+      await deleteDoc(babakRef);
+    }
+
+    // SEASON
+    let unsubscribeSeason = null;
+    let semuaSeason = [];
+
+    function openSeasonView(cerita) {
+      currentCerita = cerita;
+      seasonSubtitle.textContent = cerita.nama || "(Tanpa nama)";
+      showView(viewSeason);
+      subscribeSeason();
+    }
+
+    function subscribeSeason() {
+      if (!ensureUser() || !currentCerita) return;
+      if (unsubscribeSeason) unsubscribeSeason();
+      unsubscribeSeason = onSnapshot(pathSeasonCollection(), snapshot => {
+        semuaSeason = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        })).sort((a, b) => (a.nama || "").localeCompare(b.nama || ""));
+        renderSeasonList();
+      });
+    }
+
+    function renderSeasonList() {
+      const term = (searchSeasonInput.value || "").toLowerCase().trim();
+      seasonList.innerHTML = "";
+      const filtered = semuaSeason.filter(s =>
+        !term || (s.nama || "").toLowerCase().includes(term)
+      );
+
+      if (filtered.length === 0) {
+        seasonEmptyState.classList.remove("hidden");
+      } else {
+        seasonEmptyState.classList.add("hidden");
+      }
+
+      filtered.forEach(season => {
+        const item = document.createElement("div");
+        item.className = "list-item";
+        item.addEventListener("click", (e) => {
+          if (e.target.closest("button")) return;
+          openEpisodView(season);
+        });
+
+        const main = document.createElement("div");
+        main.className = "list-item-main";
+
+        const title = document.createElement("div");
+        title.className = "list-item-title";
+        title.textContent = season.nama || "(Tanpa nama)";
+
+        const sub = document.createElement("div");
+        sub.className = "list-item-sub";
+        sub.textContent = `Season • ${currentCerita?.nama || ""}`;
+
+        main.appendChild(title);
+        main.appendChild(sub);
+
+        const actions = document.createElement("div");
+        actions.className = "list-item-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "pill-button small ghost";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const newName = prompt("Nama season baru:", season.nama || "");
+          if (!newName) return;
+          await updateDoc(doc(pathSeasonCollection(), season.id), {
+            nama: newName.trim()
+          });
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "pill-button small danger";
+        delBtn.textContent = "Buang";
+        delBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const confirmDelete = confirm(
+            "Buang season ini dan semua episod/babak/watak di bawahnya?"
+          );
+          if (!confirmDelete) return;
+          await deleteSeasonTree(currentCerita.id, season.id);
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        item.appendChild(main);
+        item.appendChild(actions);
+
+        seasonList.appendChild(item);
+      });
+    }
+
+    searchSeasonInput.addEventListener("input", renderSeasonList);
+
+    addSeasonButton.addEventListener("click", async () => {
+      if (!ensureUser() || !currentCerita) return;
+      const nama = prompt("Nama season:");
+      if (!nama || !nama.trim()) return;
+      await addDoc(pathSeasonCollection(), {
+        nama: nama.trim(),
+        createdAt: serverTimestamp()
+      });
+    });
+
+    backToCeritaButton.addEventListener("click", () => {
+      showView(viewCerita);
+      currentSeason = null;
+      currentEpisod = null;
+      currentBabak = null;
+    });
+
+    // EPISOD
+    let unsubscribeEpisod = null;
+    let semuaEpisod = [];
+
+    function openEpisodView(season) {
+      currentSeason = season;
+      episodSubtitle.textContent = `${season.nama || ""} • ${currentCerita?.nama || ""}`;
+      showView(viewEpisod);
+      subscribeEpisod();
+    }
+
+    function subscribeEpisod() {
+      if (!ensureUser() || !currentCerita || !currentSeason) return;
+      if (unsubscribeEpisod) unsubscribeEpisod();
+      unsubscribeEpisod = onSnapshot(pathEpisodCollection(), snapshot => {
+        semuaEpisod = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        })).sort((a, b) => (a.nama || "").localeCompare(b.nama || ""));
+        renderEpisodList();
+      });
+    }
+
+    function renderEpisodList() {
+      const term = (searchEpisodInput.value || "").toLowerCase().trim();
+      episodList.innerHTML = "";
+      const filtered = semuaEpisod.filter(e =>
+        !term || (e.nama || "").toLowerCase().includes(term)
+      );
+
+      if (filtered.length === 0) {
+        episodEmptyState.classList.remove("hidden");
+      } else {
+        episodEmptyState.classList.add("hidden");
+      }
+
+      filtered.forEach(episod => {
+        const item = document.createElement("div");
+        item.className = "list-item";
+        item.addEventListener("click", (e) => {
+          if (e.target.closest("button")) return;
+          openBabakView(episod);
+        });
+
+        const main = document.createElement("div");
+        main.className = "list-item-main";
+
+        const title = document.createElement("div");
+        title.className = "list-item-title";
+        title.textContent = episod.nama || "(Tanpa nama)";
+
+        const sub = document.createElement("div");
+        sub.className = "list-item-sub";
+        sub.textContent = `Episod • ${currentSeason?.nama || ""}`;
+
+        main.appendChild(title);
+        main.appendChild(sub);
+
+        const actions = document.createElement("div");
+        actions.className = "list-item-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "pill-button small ghost";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const newName = prompt("Nama episod baru:", episod.nama || "");
+          if (!newName) return;
+          await updateDoc(doc(pathEpisodCollection(), episod.id), {
+            nama: newName.trim()
+          });
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "pill-button small danger";
+        delBtn.textContent = "Buang";
+        delBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const confirmDelete = confirm(
+            "Buang episod ini dan semua babak/watak di bawahnya?"
+          );
+          if (!confirmDelete) return;
+          await deleteEpisodTree(currentCerita.id, currentSeason.id, episod.id);
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        item.appendChild(main);
+        item.appendChild(actions);
+
+        episodList.appendChild(item);
+      });
+    }
+
+    searchEpisodInput.addEventListener("input", renderEpisodList);
+
+    addEpisodButton.addEventListener("click", async () => {
+      if (!ensureUser() || !currentCerita || !currentSeason) return;
+      const nama = prompt("Nama episod:");
+      if (!nama || !nama.trim()) return;
+      await addDoc(pathEpisodCollection(), {
+        nama: nama.trim(),
+        createdAt: serverTimestamp()
+      });
+    });
+
+    backToSeasonButton.addEventListener("click", () => {
+      showView(viewSeason);
+      currentEpisod = null;
+      currentBabak = null;
+    });
+
+    // BABAK
+    let unsubscribeBabak = null;
+    let semuaBabak = [];
+
+    function openBabakView(episod) {
+      currentEpisod = episod;
+      babakSubtitle.textContent =
+        `${episod.nama || ""} • ${currentSeason?.nama || ""} • ${currentCerita?.nama || ""}`;
+      showView(viewBabak);
+      subscribeBabak();
+    }
+
+    function subscribeBabak() {
+      if (!ensureUser() || !currentCerita || !currentSeason || !currentEpisod) return;
+      if (unsubscribeBabak) unsubscribeBabak();
+      unsubscribeBabak = onSnapshot(pathBabakCollection(), snapshot => {
+        semuaBabak = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        })).sort((a, b) => (a.nama || "").localeCompare(b.nama || ""));
+        renderBabakList();
+      });
+    }
+
+    function renderBabakList() {
+      const term = (searchBabakInput.value || "").toLowerCase().trim();
+      babakList.innerHTML = "";
+      const filtered = semuaBabak.filter(b =>
+        !term || (b.nama || "").toLowerCase().includes(term)
+      );
+
+      if (filtered.length === 0) {
+        babakEmptyState.classList.remove("hidden");
+      } else {
+        babakEmptyState.classList.add("hidden");
+      }
+
+      filtered.forEach(babak => {
+        const item = document.createElement("div");
+        item.className = "list-item";
+        item.addEventListener("click", (e) => {
+          if (e.target.closest("button")) return;
+          openActionDialogView(babak);
+        });
+
+        const main = document.createElement("div");
+        main.className = "list-item-main";
+
+        const title = document.createElement("div");
+        title.className = "list-item-title";
+        title.textContent = babak.nama || "(Tanpa nama)";
+
+        const sub = document.createElement("div");
+        sub.className = "list-item-sub";
+        sub.textContent = `Babak • ${currentEpisod?.nama || ""}`;
+
+        main.appendChild(title);
+        main.appendChild(sub);
+
+        const actions = document.createElement("div");
+        actions.className = "list-item-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "pill-button small ghost";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const newName = prompt("Nama babak baru:", babak.nama || "");
+          if (!newName) return;
+          await updateDoc(doc(pathBabakCollection(), babak.id), {
+            nama: newName.trim()
+          });
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "pill-button small danger";
+        delBtn.textContent = "Buang";
+        delBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const confirmDelete = confirm(
+            "Buang babak ini dan semua watak di bawahnya?"
+          );
+          if (!confirmDelete) return;
+          await deleteBabakTree(currentCerita.id, currentSeason.id, currentEpisod.id, babak.id);
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        item.appendChild(main);
+        item.appendChild(actions);
+
+        babakList.appendChild(item);
+      });
+    }
+
+    searchBabakInput.addEventListener("input", renderBabakList);
+
+    addBabakButton.addEventListener("click", async () => {
+      if (!ensureUser() || !currentCerita || !currentSeason || !currentEpisod) return;
+      const nama = prompt("Nama babak:");
+      if (!nama || !nama.trim()) return;
+      await addDoc(pathBabakCollection(), {
+        nama: nama.trim(),
+        createdAt: serverTimestamp()
+      });
+    });
+
+    backToEpisodButton.addEventListener("click", () => {
+      showView(viewEpisod);
+      currentBabak = null;
+    });
+
+    // ACTION & DIALOG (WATAK)
+    let unsubscribeWatak = null;
+    let semuaWatak = [];
+
+    function openActionDialogView(babak) {
+      currentBabak = babak;
+      actionDialogSubtitle.textContent =
+        `${babak.nama || ""} • ${currentEpisod?.nama || ""} • ${currentSeason?.nama || ""} • ${currentCerita?.nama || ""}`;
+
+      showView(viewActionDialog);
+      subscribeWatak();
+    }
+
+    function subscribeWatak() {
+      if (!ensureUser() || !currentBabak) return;
+      if (unsubscribeWatak) unsubscribeWatak();
+      unsubscribeWatak = onSnapshot(pathWatakCollection(), snapshot => {
+        semuaWatak = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        })).sort((a, b) => (a.nama || "").localeCompare(b.nama || ""));
+        renderWatakList();
+      });
+    }
+
+    function renderWatakList() {
+      watakList.innerHTML = "";
+      if (semuaWatak.length === 0) {
+        watakEmptyState.classList.remove("hidden");
+      } else {
+        watakEmptyState.classList.add("hidden");
+      }
+
+      semuaWatak.forEach(watak => {
+        const card = document.createElement("div");
+        card.className = "watak-card";
+
+        const header = document.createElement("div");
+        header.className = "watak-header";
+
+        const nameInput = document.createElement("input");
+        nameInput.className = "watak-name-input";
+        nameInput.value = watak.nama || "";
+        nameInput.placeholder = "Nama watak";
+        nameInput.addEventListener("change", async () => {
+          await updateDoc(doc(pathWatakCollection(), watak.id), {
+            nama: nameInput.value.trim()
+          });
+        });
+
+        const headerActions = document.createElement("div");
+        headerActions.className = "pill-button-inline-group";
+
+        const actionTextarea = document.createElement("textarea");
+        const dialogTextarea = document.createElement("textarea");
+
+        const saveBtn = document.createElement("button");
+        saveBtn.className = "pill-button small ghost";
+        saveBtn.textContent = "Simpan";
+
+        saveBtn.addEventListener("click", async () => {
+          const actionVal = actionTextarea.value || "";
+          const dialogVal = dialogTextarea.value || "";
+          const namaVal = nameInput.value || "";
+          await updateDoc(doc(pathWatakCollection(), watak.id), {
+            nama: namaVal.trim(),
+            action: actionVal,
+            dialog: dialogVal,
+            updatedAt: serverTimestamp()
+          });
+          saveBtn.textContent = "Disimpan";
+          setTimeout(() => {
+            saveBtn.textContent = "Simpan";
+          }, 900);
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "pill-button small danger";
+        delBtn.textContent = "Buang";
+        delBtn.addEventListener("click", async () => {
+          const confirmDelete = confirm(
+            "Buang watak ini bersama action & dialog?"
+          );
+          if (!confirmDelete) return;
+          await deleteDoc(doc(pathWatakCollection(), watak.id));
+        });
+
+        headerActions.appendChild(saveBtn);
+        headerActions.appendChild(delBtn);
+
+        header.appendChild(nameInput);
+        header.appendChild(headerActions);
+
+        const body = document.createElement("div");
+        body.className = "watak-body";
+
+        const actionBlock = document.createElement("div");
+        const actionLabel = document.createElement("div");
+        actionLabel.className = "field-label";
+        actionLabel.textContent = "Action";
+        actionTextarea.className = "textarea";
+        actionTextarea.value = watak.action || "";
+
+        const dialogBlock = document.createElement("div");
+        const dialogLabel = document.createElement("div");
+        dialogLabel.className = "field-label";
+        dialogLabel.textContent = "Dialog";
+        dialogTextarea.className = "textarea";
+        dialogTextarea.value = watak.dialog || "";
+
+        actionBlock.appendChild(actionLabel);
+        actionBlock.appendChild(actionTextarea);
+
+        dialogBlock.appendChild(dialogLabel);
+        dialogBlock.appendChild(dialogTextarea);
+
+        body.appendChild(actionBlock);
+        body.appendChild(dialogBlock);
+
+        card.appendChild(header);
+        card.appendChild(body);
+
+        watakList.appendChild(card);
+      });
+    }
+
+    addWatakButton.addEventListener("click", async () => {
+      if (!ensureUser() || !currentBabak) return;
+      const nama = prompt("Nama watak:");
+      if (!nama || !nama.trim()) return;
+      await addDoc(pathWatakCollection(), {
+        nama: nama.trim(),
+        action: "",
+        dialog: "",
+        createdAt: serverTimestamp()
+      });
+    });
+
+    backToBabakButton.addEventListener("click", () => {
+      showView(viewBabak);
+    });
+
+    // LOG SEJARAH
+    let unsubscribeLogs = null;
+    let semuaLog = [];
+
+    async function saveCurrentBabakToLog() {
+      if (!ensureUser() || !currentCerita || !currentSeason || !currentEpisod || !currentBabak) {
+        alert("Pastikan cerita/season/episod/babak dipilih.");
+        return;
+      }
+      const now = new Date();
+      const formatted = `${currentCerita.nama || ""} • ${currentSeason.nama || ""} • ${currentEpisod.nama || ""} • ${currentBabak.nama || ""} • ${formatMsDate(now)}`;
+
+      try {
+        await addDoc(pathLogsCollection(), {
+          ceritaName: currentCerita.nama || "",
+          seasonName: currentSeason.nama || "",
+          episodName: currentEpisod.nama || "",
+          babakName: currentBabak.nama || "",
+          timestamp: serverTimestamp(),
+          formatted
+        });
+        alert("Berjaya disimpan ke log.");
+      } catch (err) {
+        console.error(err);
+        alert("Gagal simpan log.");
+      }
+    }
+
+    saveToLogButton.addEventListener("click", saveCurrentBabakToLog);
+
+    function openLogView() {
+      if (!ensureUser()) return;
+      showView(viewLog);
+      subscribeLogs();
+    }
+
+    function subscribeLogs() {
+      if (!ensureUser()) return;
+      if (unsubscribeLogs) unsubscribeLogs();
+      unsubscribeLogs = onSnapshot(pathLogsCollection(), snapshot => {
+        semuaLog = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        })).sort((a, b) => {
+          const ta = a.timestamp?.toMillis?.() || 0;
+          const tb = b.timestamp?.toMillis?.() || 0;
+          return tb - ta;
+        });
+        renderLogList();
+      });
+    }
+
+    function renderLogList() {
+      logList.innerHTML = "";
+      if (semuaLog.length === 0) {
+        logEmptyState.classList.remove("hidden");
+      } else {
+        logEmptyState.classList.add("hidden");
+      }
+
+      semuaLog.forEach(log => {
+        const item = document.createElement("div");
+        item.className = "list-item";
+
+        const main = document.createElement("div");
+        main.className = "list-item-main";
+
+        const title = document.createElement("div");
+        title.className = "list-item-title";
+        title.textContent = log.formatted ||
+          `${log.ceritaName || ""} • ${log.seasonName || ""} • ${log.episodName || ""} • ${log.babakName || ""}`;
+
+        const sub = document.createElement("div");
+        sub.className = "list-item-sub";
+        const dateText = log.timestamp?.toDate
+          ? formatMsDate(log.timestamp.toDate())
+          : "";
+        sub.textContent = dateText;
+
+        main.appendChild(title);
+        if (dateText) main.appendChild(sub);
+
+        item.appendChild(main);
+        logList.appendChild(item);
+      });
+    }
+
+    logSejarahButton.addEventListener("click", openLogView);
+    closeLogButton.addEventListener("click", () => {
+      showView(viewCerita);
+    });
+
+    // Register service worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(err => {
+          console.log("SW registration failed", err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
