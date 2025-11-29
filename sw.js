@@ -1,4 +1,4 @@
-const CACHE_NAME = "stresskelima-cache-v8";
+const CACHE_NAME = "stresskelima-cache-v9";
 const ASSETS = [
   "./",
   "./index.html",
@@ -36,4 +36,5 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
 
