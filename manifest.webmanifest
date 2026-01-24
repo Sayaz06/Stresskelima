@@ -1,6 +1,6 @@
 {
   "name": "Stresskelima - Pengurusan Skrip & Cerita",
-  "short_name": "Stresskelima",
+  "short_name": "Skrip-Movie",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#020617",
@@ -19,3 +19,4 @@
     }
   ]
 }
+
